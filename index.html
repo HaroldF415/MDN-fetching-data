@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+
+    <title>Ajax starting point</title>
+
+    <style>
+      html, pre {
+        font-family: sans-serif;
+      }
+
+      body {
+        width: 500px;
+        margin: 0 auto;
+        background-color: #ccc;
+      }
+
+      pre {
+        line-height: 1.5;
+        letter-spacing: 0.05rem;
+        padding: 1rem;
+        background-color: white;
+      }
+
+      label {
+        width: 200px;
+        margin-right: 33px;
+      }
+
+      select {
+        width: 350px;
+        padding: 5px;
+      }
+
+    </style>
+    <!--[if lt IE 9]>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <h1>Ajax starting point</h1>
+
+    <form>
+      <label for="verse-choose">Choose a verse</label>
+      <select id="verse-choose" name="verse-choose">
+        <option>Verse 1</option>
+        <option>Verse 2</option>
+        <option>Verse 3</option>
+        <option>Verse 4</option>
+      </select>
+    </form>
+
+    <h2>The Conqueror Worm, <em>Edgar Allen Poe, 1843</em></h2>
+
+    <pre>
+
+    </pre>
+
+    <script>
+      // -------------------------------------------- START - XMLHttpRequest --------------------------------------------
+      
+      // // Using XMLHttpRequest to access local files and load them onto a webpage
+
+      // // Storing references of the <selec> and <pre> elements inside variables
+      // const verseChoose = document.querySelector('select');
+      // const poemDisplay = document.querySelector('pre');
+
+      // // When the <select>'s value is changed so will the relative URL that we've constructed.
+      // verseChoose.onchange = () => {
+      //   const verse = verseChoose.value;
+      //   updateDisplay(verse);
+      // }
+
+      // function updateDisplay(verse) {
+      //   // Constructing a relative URL pointing to the txt file we want to load.
+
+      //   // First remove the space then convert to lower case.
+      //   verse = verse.replace(" ", "");
+      //   verse = verse.toLowerCase();
+
+      //   // Proper relative URL constructed
+      //   let url = 'data/'+ verse + '.txt';
+
+      //   // Creating a new request using the XMLHtppRequest() constructor
+      //   let request = new XMLHttpRequest();
+
+      //   // Specify what HTTP request method to use - open()
+      //   request.open('GET', url);
+
+      //   // Set they type of response expected - this part isn't stricly necessary as XHR returns text by default
+      //   request.responseType = 'text';
+
+      //   // IMPORTANT - fetching resources from a server is an asynchronous operation
+
+      //   request.onload = () => {
+      //     // Setting the textContent of the poemDisplay to the value of the req.res property
+      //     poemDisplay.textContent = request.response;
+      //   }
+
+      //   // The code above won't RUN/EXECUTE unless the following line of code is written
+      //   request.send();
+
+      // }
+
+      // // Problem #1 - When the page first loads it will not show any poem. To fix this, we will add a default poem to load.
+      // updateDisplay('Verse 1');
+      // verseChoose.value = 'Verse 1';
+      // -------------------------------------------- END - XMLHttpRequest --------------------------------------------
+      
+      // -------------------------------------------- START - FETCH API --------------------------------------------
+      
+      // Using the FETCH API 
+      const verseChoose = document.querySelector('select');
+      const poemDisplay = document.querySelector('pre');
+
+      // When the <select>'s value is changed so will the relative URL that we've constructed.
+      
+      // Using arrow function syntax - To create a function with no parameters
+      verseChoose.onchange = () => {
+        const verse = verseChoose.value;
+        updateDisplay(verse);
+      }        
+
+      // Using arrow function syntax - To create a function with parameters
+      updateDisplay = (verse) =>{
+
+        verse = verse.replace(" ", "");
+        verse = verse.toLowerCase();
+
+        // Proper relative URL constructed
+        let url = 'data/'+ verse + '.txt';
+
+        // Invoking FETCH method, passing the relative URL of the resource we want
+        // fetch() - is the modern equivalent of [ request.open() ] + there is no need for an equivalent to request.send()
+        fetch(url)
+          
+          // .then() - is part of PROMISES
+          // .then() - is the follow-up code that runs AFTER the PROMISE from [ fetch() ] is resolved
+          // .then() - is the equivalent of the [ onload() ] event handler in the XHR version
+        .then(
+
+          // This function is automatically given the 'response' from the server as a parameter
+          function(response){
+
+          // .text() - is applied to the 'response' from the server which returns the response as raw text
+          // .text() - is the equivalent of [request.responseType = 'text']
+          // .text() - also returns a PROMISE 
+          response.text()
+          
+          // .then() - is the follow-up code that runs AFTER the PROMISE from [response.text()] is resolved
+          .then(
+            
+            // This function receives the raw text that [ response.text() ] PROMISE resolves to.
+            function(text){
+
+            // We SET the <pre> element's TEXT 
+            poemDisplay.textContent = text;
+
+          });
+        
+        });
+
+      }
+
+      // Problem #1 - When the page first loads it will not show any poem. To fix this, we will add a default poem to load.
+      updateDisplay('Verse 1');
+      verseChoose.value = 'Verse 1';     
+      
+      // The following block of code does the same thing as the original two above. But it is written differently
+      // fetch(url).then(function(response) {
+      //   return response.text() // This is the only difference. We included a [return] statement to get it to pass its result on to the next link in the chain
+      // }).then(function(text) {
+      //   poemDisplay.textContent = text;
+      // });
+
+    </script>
+  </body>
+</html>
